@@ -1,0 +1,6 @@
+export { default as Nav } from './components/layouts/Nav'
+export { default as Footer } from './components/layouts/Footer'
+export { default as Home } from './pages/Home'
+export { default as About } from './pages/About'
+export { default as NotFound } from './pages/NotFound'
+export { GithubProvider } from './context/github/GithubContext'
