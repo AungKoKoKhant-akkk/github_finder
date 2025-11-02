@@ -1,25 +1,36 @@
 import React, { useContext } from 'react'
 import { useState } from 'react';
 import GithubContext from '../../context/github/GithubContext';
+import AlertContext from '../../context/alert/AlertContext';
+import { searchUsers } from '../../context/github/GithubActions';
 
 
 function UserSearch() {
 
     const [text, setText] = useState('');
 
-    const { users, searchUsers, clearUsers } = useContext(GithubContext);
+    const { users, dispatch, } = useContext(GithubContext);
+
+    const { setAlert } = useContext(AlertContext);
 
     const handleChange = (e) => {
         setText(e.target.value);
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (text === '') {
-            alert('Please enter something');
+            setAlert('Please enter something', 'error');
         } else {
             // Search functionality goes here
-            searchUsers(text);
+            dispatch({
+                type: 'SET_LOADING'
+            })
+            const users = await searchUsers(text);
+            dispatch({
+                type: 'GET_USERS',
+                payload: users
+            })
             setText('');
         }
     }
@@ -29,6 +40,7 @@ function UserSearch() {
 
 
     return (
+
         <div className='max-w-6xl mx-auto px-6 mb-12'>
             <div className='grid grid-cols-1 lg:grid-cols-4 gap-6 items-end'>
                 <div className='lg:col-span-3'>
@@ -63,7 +75,7 @@ function UserSearch() {
                         <button
                             type='button'
                             className='btn btn-outline btn-lg w-full border-2 hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-all duration-300'
-                            onClick={clearUsers}
+                            onClick={() => dispatch({ type: 'CLEAR_USERS' })}
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
